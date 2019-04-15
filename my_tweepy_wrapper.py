@@ -1,4 +1,4 @@
-import tweepy, json, time, datetime, gzip
+import tweepy, json, time, datetime, gzip, sys
 
 tweets = []
 initial_time = time.time()
@@ -27,9 +27,9 @@ def get_last_2000_tweets(api, list_ids):
             try:
                 for i in range(loops):
                     if len(new_tweets) > 0:
-                        new_tweets.extend(api.user_timeline(user_id=id_str, max_id=new_tweets[-1].id_str, count=200))
+                        new_tweets.extend(api.user_timeline(user_id=id_str, max_id=new_tweets[-1].id_str, count=200,tweet_mode='extended'))
                     else:
-                        new_tweets.extend(api.user_timeline(user_id=id_str, count=200))
+                        new_tweets.extend(api.user_timeline(user_id=id_str, count=200,tweet_mode='extended'))
                 repeat = False
             except tweepy.error.TweepError as e:
                 repeat = True
@@ -47,7 +47,7 @@ def get_last_2000_tweets(api, list_ids):
                     repeat = False
         print '%s tweets have been recovered from %s timeline' % (len(new_tweets), id_str)
         print len(new_tweets)
-        file_name = './parlamentarios_timeline/tweets-%s.txt.gz' % (id_str)
+        file_name = './parlamentarios_usa/tweets-%s.txt.gz' % (id_str)
         print 'Writing file:', file_name
         with gzip.open(file_name, 'w') as f:
             for tweet in new_tweets:
@@ -62,7 +62,7 @@ class StdOutListener(tweepy.StreamListener):
         #save the status every 30 mins
         if elapsed_time >= 60 * 30:
             now = datetime.datetime.now()
-            file_name = './corpus_new/tweets-%s-%s-%s-%s-%s.txt.gz' % (now.month, now.day, now.hour, now.minute, now.second)
+            file_name = './parlamentarios_usa/tweets-%s-%s-%s-%s-%s.txt.gz' % (now.month, now.day, now.hour, now.minute, now.second)
             print 'Writing file:', file_name
             with gzip.open(file_name, 'w') as f:
                 for tweet in tweets:
@@ -103,7 +103,9 @@ if __name__ == '__main__':
     auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
     auth.set_access_token(USER_TOKEN, USER_SECRET)
     api = tweepy.API(auth)
-    twitter_ids = get_list_members_ids(api, 'Congreso_Es', 'diputados-xii-legislatura')
+    twitter_ids = get_list_members_ids(api, "cspan", "members-of-congress")
+    #twitter_ids = get_list_members_ids(api, "twittergov", "uk-mps")
+    #twitter_ids = get_list_members_ids(api, 'Congreso_Es', 'diputados-xii-legislatura')
+    twitter_ids = ['138203134']
     get_last_2000_tweets(api, twitter_ids )
-
-    streaming_timeline_users(auth, twitter_ids)
+    #streaming_timeline_users(auth, twitter_ids)
