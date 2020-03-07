@@ -66,7 +66,7 @@ class StdOutListener(tweepy.StreamListener):
         global tweets, initial_time
         elapsed_time = time.time () - initial_time #elapsed secons
         #save the status every 30 mins
-        if elapsed_time >= 60 * 1:
+        if elapsed_time >= 60 * 30:
             now = datetime.datetime.now()
             file_name = './femenism/tweets-%s-%s-%s-%s-%s.txt.gz' % (now.month, now.day, now.hour, now.minute, now.second)
             print('Writing file:', file_name)
@@ -150,7 +150,7 @@ if __name__ == '__main__':
     auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
     auth.set_access_token(USER_TOKEN, USER_SECRET)
     api = tweepy.API(auth)
-    words = ["#8M", " #HaciaLaHuelgaFeminista", "#8M2020",  "igualdad", "feminismo", "feminazi", "género", "brecha", "violencia", "hombre", "mujer"]
+    words = ["#8M", "#HaciaLaHuelgaFeminista", "#8M2020",  "igualdad", "feminismo", "feminazi", "género", "brecha", "violencia", "hombre", "mujer"]
     streaming_words(auth, words)
     #streaming_timeline_users(auth, twitter_ids)
     #twitter_ids = get_list_members_ids(api, "cspan", "members-of-congress")
