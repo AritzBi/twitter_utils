@@ -18,8 +18,13 @@ def streaming_timeline_users(auth, list_ids):
 
 def streaming_words(auth, words):
     listener = StdOutListener()
-    stream = tweepy.Stream(auth, listener)
-    stream.filter(track=words)
+    while True:
+        try:
+            stream = tweepy.Stream(auth, listener)
+            stream.filter(track=words)
+        except IncompleteRead:
+            # Oh well, reconnect and keep trucking
+            continue
 
 def get_last_2000_tweets(api, list_ids):
     loops = 15
