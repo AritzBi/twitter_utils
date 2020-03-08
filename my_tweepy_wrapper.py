@@ -72,7 +72,6 @@ class StdOutListener(tweepy.StreamListener):
             print('Writing file:', file_name)
             with gzip.open(file_name, 'wt') as f:
                 for tweet in tweets:
-                    print(tweet)
                     f.write(json.dumps(tweet) + '\n')
             print('Writing finished')
             tweets = []
@@ -150,7 +149,7 @@ if __name__ == '__main__':
     auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
     auth.set_access_token(USER_TOKEN, USER_SECRET)
     api = tweepy.API(auth)
-    words = ["#8M", "#HaciaLaHuelgaFeminista", "#8M2020",  "igualdad", "feminismo", "feminazi", "género", "brecha", "violencia", "hombre", "mujer"]
+    words = ["#8M", "#HaciaLaHuelgaFeminista", "#8M2020",  "igualdad", "feminismo", "feminazi", "género", "brecha", "violencia", "hombre", "mujer", "8-M", "DíaDeLaMujer", "8#Marzo", "feminista"]
     streaming_words(auth, words)
     #streaming_timeline_users(auth, twitter_ids)
     #twitter_ids = get_list_members_ids(api, "cspan", "members-of-congress")
