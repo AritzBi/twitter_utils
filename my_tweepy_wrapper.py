@@ -1,5 +1,6 @@
 import tweepy, json, time, datetime, gzip, sys
 from utils import load_list_twitters_ids
+from http.client import IncompleteRead
 
 tweets = []
 initial_time = time.time()
@@ -18,13 +19,8 @@ def streaming_timeline_users(auth, list_ids):
 
 def streaming_words(auth, words):
     listener = StdOutListener()
-    while True:
-        try:
-            stream = tweepy.Stream(auth, listener)
-            stream.filter(track=words)
-        except IncompleteRead:
-            # Oh well, reconnect and keep trucking
-            continue
+    stream = tweepy.Stream(auth, listener)
+    stream.filter(track=words)
 
 def get_last_2000_tweets(api, list_ids):
     loops = 15
@@ -71,7 +67,7 @@ class StdOutListener(tweepy.StreamListener):
         global tweets, initial_time
         elapsed_time = time.time () - initial_time #elapsed secons
         #save the status every 30 mins
-        if elapsed_time >= 60 * 30:
+        if elapsed_time >= 60 * 10:
             now = datetime.datetime.now()
             file_name = './femenism/tweets-%s-%s-%s-%s-%s.txt.gz' % (now.month, now.day, now.hour, now.minute, now.second)
             print('Writing file:', file_name)
@@ -155,7 +151,13 @@ if __name__ == '__main__':
     auth.set_access_token(USER_TOKEN, USER_SECRET)
     api = tweepy.API(auth)
     words = ["#8M", "#HaciaLaHuelgaFeminista", "#8M2020",  "igualdad", "feminismo", "feminazi", "género", "brecha", "violencia", "hombre", "mujer", "8-M", "DíaDeLaMujer", "8#Marzo", "feminista"]
-    streaming_words(auth, words)
+    while True:
+        try:
+            streaming_words(auth, words)
+        except IncompleteRead:
+            print("Error catched")
+            # Oh well, reconnect and keep trucking
+            continue
     #streaming_timeline_users(auth, twitter_ids)
     #twitter_ids = get_list_members_ids(api, "cspan", "members-of-congress")
     #twitter_ids = get_list_members_ids(api, "twittergov", "uk-mps")
